@@ -1,0 +1,69 @@
+```{r}
+library(tidyverse)
+install.packages("data.table")
+library(data.table)
+
+```
+
+```{r}
+txt <- read.table("household_power_consumption.txt", sep = ";", header = T, na.string = c("NA","", "?" ))
+txt
+
+```
+
+Interesting Question: Which place of the house used the most electricity?
+
+```{r}
+SUM <-mutate(txt,
+  total1 = sum(Sub_metering_1,na.rm = TRUE),
+  total2 = sum(Sub_metering_2, na.rm = TRUE),
+  total3 = sum(Sub_metering_3, na.rm = TRUE))
+  
+
+
+
+```
+
+```{r}
+newsum <-SUM %>%
+      select(total1,total2,total3) %>% 
+      filter(row_number() == 1)
+```
+
+
+
+
+```{r}
+newsum <-SUM %>%
+      select(total1,total2,total3) %>% 
+      filter(row_number() == 1)
+firm <- tribble(~total1,~total2, ~total3,16126111, 16126111, 16126111)
+
+newsum <- rbind(newsum, firm)
+
+```
+
+```{r}
+ggplot(data = newsum) + 
+  geom_bar(mapping = aes(x = total1))
+ggplot(data = newsum) + 
+  geom_bar(mapping = aes(x = total2))
+ggplot(data = newsum) + 
+  geom_bar(mapping = aes(x = total3))
+```
+
+
+
+Answer: Electric, water-heater, and air-conditioner used the majority of electricy, which utilized 13235167 W per minutes. And both kitchen(2299135) and laundry room(2661031) used only a little electricy comaping to the previous one.
+
+Reason: The reason why I think the findings are interesting is because now we will be able to know truning the heat or Ac off is the most effective way to save the energy. However, anohter finding that surprised me is that laundry room actually used more electricity than the Kitchen, since we dont need to do laudry daily, but we do need to use kitchen pretty much everyday.
+Therefore, anohter tip to save the energy would be unplug the laundry machine when you are not using it.
+
+
+Handle missing data:
+I tried to combine all the values in Sub_metering_1, Sub_metering_2, and Sub_metering_3 in order to see which sub_meter used the most energy. However, the sum function failed on the concole because it noticed that there are missing values in there. Therefore, I used "?sum" to see how to ignore the na value in the dataset. And here is the solution "sum(..., na.rm = FALSE)"
+
+
+
+
+
