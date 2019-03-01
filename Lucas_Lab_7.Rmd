@@ -1,0 +1,48 @@
+---
+title: "Lucas Brack Lab 7"
+author: "Lucas Brack"
+date: "February 27, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+#install.packages('data.table')
+library(data.table)
+```
+
+```{r echo = F, message = F, warning = F, results='hide'}
+
+# Load the data
+
+data1 <- read.table('household_power_consumption.txt', sep=";", header=T, na.strings=c("NA", "", "?"), stringsAsFactors=FALSE)  # Filenames
+view(data1)
+```
+#What months have the highest average voltage use?
+```{r echo = F, message = F, warning = F, results='hide'}
+
+month_volts <- data1 %>%
+separate(Date, into = c("Day","Month", "Year"))  %>%
+ select(Voltage, Month)%>%
+  filter(!is.na(Voltage))%>%
+  arrange(desc(Month))
+month_volts
+
+```
+
+```{r,echo = F, message = F, warning = F}
+avg_volts <- month_volts %>%
+  group_by(Month)%>%
+  summarize(mean(Voltage))
+avg_volts
+```
+
+```{r echo = F, message = F, warning = F}
+ggplot(data=month_volts)+
+  geom_boxplot( mapping =aes(x=Month, y=Voltage, color=as.factor(Month)))+
+  labs(title = "Average Voltage Use Increases During the Winter", x="Energy sub-metering No. 3 (in watt-hour of active energy)", y="Voltage")
+```
+This plot shows that January, March and Decemember have the highest average voltage use, all averaging over 241.5 volts. This is interesting because these are the colder months, so heating the house seems to use more volts than cooling it during the summer.
+
+I came up with this because I wanted to see the effect the month had on the voltage. I did this by first selecting only the date and voltage columns. Then I changed the date column to be just the month because that was all I wanted to see there. I then made a box plo because that easily shows the average for voltage, as wells as showing the range for each month. This made it easy to compare the average voltage for each month. 
