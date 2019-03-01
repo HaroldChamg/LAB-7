@@ -1,0 +1,45 @@
+---
+title: "Lab 7"
+author: "Max Ward"
+date: "2/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(data.table)
+library(lubridate)
+data1 <- read.table('household_power_consumption.txt', 
+                    sep=";",                            
+                    header = T,                        
+                    na.strings = c("NA","", "?"),       
+                    stringsAsFactors=FALSE
+                    )
+```
+
+```{r}
+data2 <- data1%>%
+  separate(Date, into =c("day", "Month", "Year"))%>%
+  select(Year, Voltage)%>%
+  group_by(Year)
+data2
+```
+
+***What was the average voltage used in each year, and what year used the most?
+```{r}
+data2 %>% 
+  group_by(Year) %>% 
+  summarise(
+    avg_volts = mean(Voltage, na.rm = TRUE),
+    n = n()) %>% 
+  ggplot(mapping = aes(Year, avg_volts)) +
+    geom_count()
+```
+
+
+***As we can see from the graph, 2009 used the most volts everyday on average. This was what I kind of guessed because more technoly is being used so more energy is aswell. But then dips back down in 2010 because of what I guess is because things are becoming more energy effecient.  
+
+***I think this is an interesting question becuase more and more technology is being used over the years I would expect to see more energy used, but also things are becoming for efficient so I wanted to see where it measured up. 
+
+***I came up with this quesrion just becuase the data allowed it and I was interesting in finding the answer. I did a lot of stuff from the last chapter and some from the new. I also did a geom line becuase I thought that was the best way to show the highes and the lowes of the data. 
